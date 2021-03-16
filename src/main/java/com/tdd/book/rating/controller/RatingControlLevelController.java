@@ -1,5 +1,7 @@
 package com.tdd.book.rating.controller;
 
+import com.tdd.book.rating.service.RatingControlService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,9 @@ public class RatingControlLevelController {
     private static final String NUMBER_REGEX = "[0-9]*";
     private static final String SPECIAL_CHAR_REGEX = "[a-zA-Z0-9 ]*";
 
+    @Autowired
+    private RatingControlService ratingControlService;
+
     @GetMapping("/rcl/book/v1/read/eligibility/{control_level}/{book_id}")
     public ResponseEntity<Boolean> getControlAccess(@PathVariable("control_level") String control_level,
                                                     @PathVariable("book_id") String bookId) {
@@ -21,7 +26,9 @@ public class RatingControlLevelController {
             return new ResponseEntity<>((HttpStatus.BAD_REQUEST));
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        boolean canRead = ratingControlService.canReadBook(control_level, bookId);
+
+        return new ResponseEntity<>(canRead, HttpStatus.OK);
     }
 
     private boolean containsSpecialCharactrs(String bookId) {
