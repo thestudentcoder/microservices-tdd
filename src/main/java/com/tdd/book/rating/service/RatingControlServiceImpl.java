@@ -2,6 +2,7 @@ package com.tdd.book.rating.service;
 
 import com.tdd.book.rating.common.RatingLevels;
 import com.tdd.book.rating.config.RatingControlServiceConfig;
+import com.tdd.book.rating.exception.TechnicalFailureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -31,21 +32,24 @@ public class RatingControlServiceImpl implements RatingControlService{
         Map<String, Integer> ratingControlLevelMap = RatingLevels.RATING_CODE_LEVEL;
         Integer customerProvidedRatingLevelOrder = ratingControlLevelMap.get(customerRatingControlLevel);
         HttpEntity<?> requestEntity = new HttpEntity<>(generateHeader());
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                ratingControlServiceConfig.getBookServiceEndpoint() + bookId,
-                HttpMethod.GET,
-                requestEntity,
-                String.class);
+        try {
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    ratingControlServiceConfig.getBookServiceEndpoint() + bookId,
+                    HttpMethod.GET,
+                    requestEntity,
+                    String.class);
 
-        if (HttpStatus.OK == responseEntity.getStatusCode()) {
-            Integer bookRatingControlLevel = ratingControlLevelMap.get(responseEntity.getBody());
-            String ratingControlLevel = responseEntity.getBody();
-            if (containsValidRatingLevelCodes(bookRatingControlLevel, customerProvidedRatingLevelOrder)) {
-                return bookRatingControlLevel <= customerProvidedRatingLevelOrder;
+            if (HttpStatus.OK == responseEntity.getStatusCode()) {
+                Integer bookRatingControlLevel = ratingControlLevelMap.get(responseEntity.getBody());
+                String ratingControlLevel = responseEntity.getBody();
+                if (containsValidRatingLevelCodes(bookRatingControlLevel, customerProvidedRatingLevelOrder)) {
+                    return bookRatingControlLevel <= customerProvidedRatingLevelOrder;
+                }
             }
+            return false;
+        } catch (TechnicalFailureException te) {
+            return false;
         }
-
-        return false;
     }
 
     private MultiValueMap<String, String> generateHeader() {
