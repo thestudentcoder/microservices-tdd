@@ -2,6 +2,7 @@ package com.tdd.book.rating.service;
 
 import com.tdd.book.rating.common.RatingLevels;
 import com.tdd.book.rating.config.RatingControlServiceConfig;
+import com.tdd.book.rating.exception.BookNotFoundException;
 import com.tdd.book.rating.exception.TechnicalFailureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -48,7 +49,9 @@ public class RatingControlServiceImpl implements RatingControlService{
             }
             return false;
         } catch (TechnicalFailureException te) {
-            return false;
+            return false;  // alternatively could throw TechnicalExcepton instead of false
+        } catch (BookNotFoundException be) {
+            throw new BookNotFoundException("Book not found ");
         }
     }
 
