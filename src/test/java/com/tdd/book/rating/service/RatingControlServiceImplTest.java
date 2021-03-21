@@ -1,5 +1,6 @@
 package com.tdd.book.rating.service;
 
+import com.tdd.book.rating.config.RatingControlServiceConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,11 +26,15 @@ public class RatingControlServiceImplTest {
     @Mock
     private RestTemplate restTemplate;          // mock restTemplate because we are mocking the call to the outside api
 
+    @Mock
+    private RatingControlServiceConfig ratingControlServiceConfig;
+
     private RatingControlServiceImpl ratingControlService;
 
     @Before
     public void setUp() throws Exception {
-        ratingControlService = new RatingControlServiceImpl(restTemplate);
+        Mockito.when(ratingControlServiceConfig.getBookServiceEndpoint()).thenReturn(VALID_URL_BOOK_SERVICE);
+        ratingControlService = new RatingControlServiceImpl(restTemplate, ratingControlServiceConfig);
     }
 
     @Test

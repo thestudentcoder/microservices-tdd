@@ -1,0 +1,7 @@
+server:
+  servlet:
+    context-path: /rating-control
+
+api:
+  bookService:
+    endpoint: 'https://my-third-party.service.com/fetch/book/rating/'
