@@ -27,7 +27,6 @@ public class RatingControlLevelController {
         }
 
         boolean canRead = ratingControlService.canReadBook(control_level, bookId);
-
         return new ResponseEntity<>(canRead, HttpStatus.OK);
     }
 

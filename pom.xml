@@ -5,17 +5,21 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.9.RELEASE</version>
+        <version>2.1.8.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.tdd.book.rating</groupId>
     <artifactId>rating-control-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>rating-control-service</name>
-    <description>Rating Control Service</description>
+    <name>RatingControlServiceApi</name>
+    <description>Udemy course by Satender Kumar Mall</description>
+
     <properties>
         <java.version>1.8</java.version>
+        <jsonFilePath>src/main/resources/swagger/rating_control_level_api.yaml</jsonFilePath>
+        <start-class>com.tdd.book.rating.RatingControlServiceApplication</start-class>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -23,97 +27,176 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!--    SWAGGER DEPENDENCIES    -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.junit.vintage</groupId>-->
-<!--                    <artifactId>junit-vintage-engine</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
         </dependency>
 
-        <!-- hamcrest -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>2.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- rest assured -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>4.3.3</version>
+            <version>3.3.0</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- cucumber -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java8</artifactId>
-            <version>3.0.2</version>
+            <version>4.7.2</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-spring</artifactId>
-            <version>3.0.2</version>
+            <version>4.7.2</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>3.0.2</version>
+            <version>4.7.2</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- wiremock -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-expressions</artifactId>
+            <version>7.0.2</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock</artifactId>
-            <version>2.27.2</version>
-            <type>pom</type>
+            <version>2.22.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
+                    <groupId>com.google.guava:guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-wiremock</artifactId>
+            <version>2.1.2.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <!--            <exclusions>-->
+            <!--                <exclusion>-->
+            <!--                    <groupId>org.junit.vintage</groupId>-->
+            <!--                    <artifactId>junit-vintage-engine</artifactId>-->
+            <!--                </exclusion>-->
+            <!--            </exclusions>-->
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>2.4.8</version>
+                <executions>
+                    <execution>
+                        <id>generate-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${jsonFilePath}</inputSpec>
+                            <language>spring</language>
+                            <output>${project.build.directory}/generated-sources/swagger</output>
+                            <apiPackage>com.tdd.book.swagger.api</apiPackage>
+                            <modelPackage>com.tdd.book.swagger.model</modelPackage>
+                            <invokerPackage>com.tdd.book.swagger.invoker</invokerPackage>
+                            <environmentVariables>
+                                <dateLibrary>java8</dateLibrary>
+                                <models></models>
+                                <apis></apis>
+                                <supportingFilesToGenerate>
+                                    SwaggerDocumentationConfig.java,HomeController.java
+                                </supportingFilesToGenerate>
+                            </environmentVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-additional-generated-files</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>
+                                clean
+                            </goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>
+                                true
+                            </excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>
+                                        ${project.build.directory}/generated-sources/swagger
+                                    </directory>
+                                    <excludes>
+                                        <exclude>
+                                            src/main/java/com/**
+                                        </exclude>
+                                    </excludes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
             </plugin>
         </plugins>

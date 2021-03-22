@@ -23,7 +23,7 @@ public class RatingControlServiceConfigTest {
     @Test
     public void shouldLoadBookServiceEndPoint() {
         assertThat("Book Service Endpoint value is null", ratingControlService.getBookServiceEndpoint(),
-                not(emptyOrNullString()));
+                not(isEmptyOrNullString()));
         assertThat("Book Service Endpoint value mismatch", ratingControlService.getBookServiceEndpoint(),
                 is(BOOK_SERVICE_URL));
 
